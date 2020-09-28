@@ -2,6 +2,7 @@ package com.zhao.eduservice.service;
 
 import com.zhao.eduservice.entity.EduCourse;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhao.eduservice.entity.Vo.CourseInfoForm;
 
 /**
  * <p>
@@ -13,4 +14,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface EduCourseService extends IService<EduCourse> {
 
+    String addCourseInfo(CourseInfoForm courseInfoForm);
+
+    CourseInfoForm getCourseInfoById(String id);
+
+    void updateCourseInfo(CourseInfoForm courseInfoForm);
 }
