@@ -4,6 +4,7 @@ import com.zhao.baseservice.exception.GuliException;
 import com.zhao.eduservice.entity.EduCourse;
 import com.zhao.eduservice.entity.EduCourseDescription;
 import com.zhao.eduservice.entity.Vo.CourseInfoForm;
+import com.zhao.eduservice.entity.Vo.CoursePublishVo;
 import com.zhao.eduservice.mapper.EduCourseMapper;
 import com.zhao.eduservice.service.EduCourseDescriptionService;
 import com.zhao.eduservice.service.EduCourseService;
@@ -92,5 +93,16 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
         eduCourseDescription.setId(id);
         eduCourseDescription.setDescription(courseInfoForm.getDescription());
         eduCourseDescriptionService.updateById(eduCourseDescription);
+    }
+
+    /**
+     * 根据id查询课程发布信息
+     * @param id
+     * @return
+     */
+    @Override
+    public CoursePublishVo getCoursePublishById(String id) {
+        CoursePublishVo coursePublishVo = baseMapper.getCoursePublishById(id);
+        return coursePublishVo;
     }
 }
