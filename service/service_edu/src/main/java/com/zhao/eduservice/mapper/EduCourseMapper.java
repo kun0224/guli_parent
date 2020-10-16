@@ -3,6 +3,7 @@ package com.zhao.eduservice.mapper;
 import com.zhao.eduservice.entity.EduCourse;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zhao.eduservice.entity.Vo.CoursePublishVo;
+import com.zhao.eduservice.entity.Vo.CourseWebVo;
 
 /**
  * <p>
@@ -16,4 +17,5 @@ public interface EduCourseMapper extends BaseMapper<EduCourse> {
 
     CoursePublishVo getCoursePublishById(String id);
 
+    CourseWebVo getCourseWeVo(String id);
 }

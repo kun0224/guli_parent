@@ -14,6 +14,11 @@
     <modules>
         <module>service_edu</module>
         <module>service_oss</module>
+        <module>service_vod</module>
+        <module>service_cms</module>
+        <module>service_sms</module>
+        <module>service_ucenter</module>
+        <module>service_wxlogin</module>
     </modules>
 
     <dependencies>
@@ -129,8 +134,6 @@
         </dependency>
 
     </dependencies>
-
-
 
 
 </project>

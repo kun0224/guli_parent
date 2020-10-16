@@ -1,17 +1,30 @@
 package com.zhao.eduservice.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhao.baseservice.exception.GuliException;
+import com.zhao.eduservice.entity.EduChapter;
 import com.zhao.eduservice.entity.EduCourse;
 import com.zhao.eduservice.entity.EduCourseDescription;
+import com.zhao.eduservice.entity.EduVideo;
 import com.zhao.eduservice.entity.Vo.CourseInfoForm;
 import com.zhao.eduservice.entity.Vo.CoursePublishVo;
+import com.zhao.eduservice.entity.Vo.CourseQueryVo;
+import com.zhao.eduservice.entity.Vo.CourseWebVo;
 import com.zhao.eduservice.mapper.EduCourseMapper;
+import com.zhao.eduservice.service.EduChapterService;
 import com.zhao.eduservice.service.EduCourseDescriptionService;
 import com.zhao.eduservice.service.EduCourseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhao.eduservice.service.EduVideoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -26,6 +39,13 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
 
     @Autowired
     EduCourseDescriptionService eduCourseDescriptionService;
+
+    @Autowired
+    EduVideoService videoService;
+
+    @Autowired
+    EduChapterService chapterService;
+
 
     /**
      * 添加课程信息
@@ -97,6 +117,7 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
 
     /**
      * 根据id查询课程发布信息
+     *
      * @param id
      * @return
      */
@@ -104,5 +125,94 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
     public CoursePublishVo getCoursePublishById(String id) {
         CoursePublishVo coursePublishVo = baseMapper.getCoursePublishById(id);
         return coursePublishVo;
+    }
+
+    /**
+     * 删除课程信息
+     *
+     * @param courseId
+     */
+    @Override
+    public void deleteCourseInfo(String courseId) {
+        //1.删除小节
+        QueryWrapper<EduVideo> videowrapper = new QueryWrapper<>();
+        videowrapper.eq("course_id", courseId);
+        videoService.remove(videowrapper);
+
+        //2.删除章节
+        QueryWrapper<EduChapter> Chapterwrapper = new QueryWrapper<>();
+        Chapterwrapper.eq("course_id", courseId);
+        chapterService.remove(Chapterwrapper);
+
+        //3.删除课程描述信息
+        eduCourseDescriptionService.removeById(courseId);
+
+        //4.删除课程
+        baseMapper.deleteById(courseId);
+    }
+
+    /**
+     * 带条件的分页查询课程
+     *
+     * @param pageParam
+     * @param courseQueryVo
+     * @return
+     */
+    @Override
+    public Map<String, Object> getCoursePageVo(Page<EduCourse> pageParam, CourseQueryVo courseQueryVo) {
+        //1.获取查询条件
+        String subjectParentId = courseQueryVo.getSubjectParentId();
+        String subjectId = courseQueryVo.getSubjectId();
+        String buyCountSort = courseQueryVo.getBuyCountSort();
+        String gmtCreateSort = courseQueryVo.getGmtCreateSort();
+        String priceSort = courseQueryVo.getPriceSort();
+
+        //2.判断拼装查询条件
+        QueryWrapper<EduCourse> wrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(subjectParentId)) {
+            wrapper.eq("subject_parent_id", subjectParentId);
+        }
+        if (!StringUtils.isEmpty(subjectId)) {
+            wrapper.eq("subject_id", subjectId);
+        }
+        if (!StringUtils.isEmpty(buyCountSort)) {
+            wrapper.orderByDesc("buy_count");
+        }
+        if (!StringUtils.isEmpty(gmtCreateSort)) {
+            wrapper.orderByDesc("gmt_create");
+        }
+        if (!StringUtils.isEmpty(priceSort)) {
+            wrapper.orderByDesc("price");
+        }
+
+        //3.带条件分页查询
+        baseMapper.selectPage(pageParam, wrapper);
+
+        //4.封装查询结果
+        List<EduCourse> records = pageParam.getRecords();
+        long current = pageParam.getCurrent();
+        long pages = pageParam.getPages();
+        long size = pageParam.getSize();
+        long total = pageParam.getTotal();
+        boolean hasNext = pageParam.hasNext();
+        boolean hasPrevious = pageParam.hasPrevious();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("items", records);
+        map.put("current", current);
+        map.put("pages", pages);
+        map.put("size", size);
+        map.put("total", total);
+        map.put("hasNext", hasNext);
+        map.put("hasPrevious", hasPrevious);
+
+        return map;
+
+    }
+
+    @Override
+    public CourseWebVo getCourseWebVo(String id) {
+        CourseWebVo courseWebVo = baseMapper.getCourseWeVo(id);
+        return courseWebVo;
     }
 }

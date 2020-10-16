@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 课程 前端控制器
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(description = "课程管理")
 @RestController
 @RequestMapping("/eduservice/edu-course")
-@CrossOrigin    //跨域
+//@CrossOrigin    //跨域
 public class EduCourseController {
 
     @Autowired
@@ -65,6 +67,20 @@ public class EduCourseController {
         //课程状态 Draft未发布  Normal已发布
         eduCourse.setStatus("Normal");
         eduCourseService.updateById(eduCourse);
+        return R.ok();
+    }
+
+    @ApiOperation(value = "查询所有课程信息")
+    @GetMapping("getAllCourse")
+    public R getAllCourse(){
+        List<EduCourse> courseList = eduCourseService.list(null);
+        return R.ok().data("courseList",courseList);
+    }
+
+    @ApiOperation(value = "删除课程信息")
+    @DeleteMapping("deleteCourseInfo/{courseId}")
+    public R deleteCourseInfo(@PathVariable String courseId){
+        eduCourseService.deleteCourseInfo(courseId);
         return R.ok();
     }
 }

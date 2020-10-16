@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(description = "登录管理")
 @RestController
 @RequestMapping("/eduservice/edu-teacher")
-@CrossOrigin
+//@CrossOrigin
 public class LoginBackstageController {
 
     /**

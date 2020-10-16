@@ -49,7 +49,7 @@ public class EduVideoController {
     @DeleteMapping("deleteVideo/{id}")
     //TODO 删除小节的同时删除云端存储视频
     public R deleteVideo(@PathVariable String id) {
-        eduVideoService.removeById(id);
+        eduVideoService.deleteVideo(id);
         return R.ok();
     }
 
