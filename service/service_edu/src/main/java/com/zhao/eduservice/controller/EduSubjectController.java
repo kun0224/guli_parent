@@ -38,13 +38,13 @@ public class EduSubjectController {
     @Autowired
     EduSubjectService eduSubjectService;
 
-    @PostMapping("test")
-    public List<ExcelSubjectData> test(){
-        List<ExcelSubjectData> eduSubjectList = eduSubjectMapper.getEduSubjectList();
-        String filename = "E:\\22.xlsx";
-        EasyExcel.write(filename, ExcelSubjectData.class).sheet("写入").doWrite(eduSubjectList);
-        return eduSubjectList;
-    }
+//    @PostMapping("test")
+//    public List<ExcelSubjectData> test(){
+//        List<ExcelSubjectData> eduSubjectList = eduSubjectMapper.getEduSubjectList();
+//        String filename = "E:\\22.xlsx";
+//        EasyExcel.write(filename, ExcelSubjectData.class).sheet("写入").doWrite(eduSubjectList);
+//        return eduSubjectList;
+//    }
 
     @ApiOperation(value = "导入课程分类信息")
     @PostMapping("addSubject")

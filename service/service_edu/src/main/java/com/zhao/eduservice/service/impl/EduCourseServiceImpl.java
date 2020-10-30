@@ -210,6 +210,11 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
 
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @Override
     public CourseWebVo getCourseWebVo(String id) {
         CourseWebVo courseWebVo = baseMapper.getCourseWeVo(id);

@@ -7,11 +7,14 @@ import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.vod.model.v20170321.DeleteVideoRequest;
 import com.aliyuncs.vod.model.v20170321.DeleteVideoResponse;
+import com.aliyuncs.vod.model.v20170321.GetVideoPlayAuthRequest;
+import com.aliyuncs.vod.model.v20170321.GetVideoPlayAuthResponse;
 import com.zhao.baseservice.exception.GuliException;
 import com.zhao.commonutils.R;
 import com.zhao.vod.utils.AliyunVodSDKUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +27,7 @@ import java.io.InputStream;
 @RequestMapping("/eduvod/video")
 //@CrossOrigin
 public class VodController {
+
 
     //账号AK信息请填写(必选)
     private static final String accessKeyId = "LTAI4GK4H3GUqVEQyFHq9ULZ";
@@ -67,7 +71,7 @@ public class VodController {
 
     @ApiOperation(value = "视频删除")
     @DeleteMapping("deleteVideoById/{videoId}")
-    public R deleteVideoById(@PathVariable String videoId){
+    public R deleteVideoById(@PathVariable String videoId) {
         try {
             //1.创建初始化对象
             DefaultAcsClient client = AliyunVodSDKUtils.initVodClient(accessKeyId, accessKeySecret);
@@ -87,6 +91,29 @@ public class VodController {
 
     }
 
-
+    @ApiOperation(value = "根据视频id获取视频播放凭证")
+    @GetMapping("getPlayAuth/{vid}")
+    public R getPlayAuth(@PathVariable String vid) {
+        try {
+            //（1）创建初始化对象
+            DefaultAcsClient client =
+                    AliyunVodSDKUtils.initVodClient("LTAI4GK4H3GUqVEQyFHq9ULZ", "iXYjrFKZ09INEalumyHLrM0Rd7FSF9");
+//            //2创建请求、响应对象（不同操作、类不一样）
+            //（2）创建request、response对象
+            GetVideoPlayAuthRequest request = new GetVideoPlayAuthRequest();
+            GetVideoPlayAuthResponse response = new GetVideoPlayAuthResponse();
+            //（3）向request设置视频id
+            request.setVideoId(vid);
+            //播放凭证有过期时间，默认值：100秒 。取值范围：100~3000。
+            //request.setAuthInfoTimeout(200L);
+            //（4）调用初始化方法实现功能
+            response = client.getAcsResponse(request);
+            //（5）调用方法返回response对象，获取内容
+            String playAuth = response.getPlayAuth();
+            return R.ok().data("playAuth", playAuth);
+        } catch (ClientException e) {
+            throw new GuliException(20001, "获取视频凭证失败");
+        }
+    }
 
 }
